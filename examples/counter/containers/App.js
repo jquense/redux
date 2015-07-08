@@ -24,8 +24,11 @@ export default class App {
         <Provider store={store}>
           {() => <CounterApp />}
         </Provider>
-        <DebugPanel>
-          {() => <ReduxMonitor store={devToolsStore} />}
+
+        <DebugPanel top right bottom>
+          <Provider store={devToolsStore}>
+            {() => <ReduxMonitor />}
+          </Provider>
         </DebugPanel>
       </div>
     );
