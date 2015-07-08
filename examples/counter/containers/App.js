@@ -1,18 +1,33 @@
 import React from 'react';
 import CounterApp from './CounterApp';
-import { createStore, applyMiddleware } from 'redux';
+import { createStore, applyMiddleware, compose, combineReducers } from 'redux';
 import { Provider } from 'redux/react';
 import * as reducers from '../reducers';
 
-const createStoreWithMiddleware = applyMiddleware()(createStore);
-const store = createStoreWithMiddleware(reducers);
+import DebugPanel from '../redux-devtools/DebugPanel';
+import devtools from '../redux-devtools/devtools';
+import ReduxMonitor from '../redux-devtools/ReduxMonitor';
+
+const finalCreateStore = compose(
+  applyMiddleware(),
+  devtools(),
+  createStore
+);
+
+const store = finalCreateStore(combineReducers(reducers));
+const devToolsStore = store.getDevToolsStore();
 
 export default class App {
   render() {
     return (
-      <Provider store={store}>
-        {() => <CounterApp />}
-      </Provider>
+      <div>
+        <Provider store={store}>
+          {() => <CounterApp />}
+        </Provider>
+        <DebugPanel>
+          {() => <ReduxMonitor store={devToolsStore} />}
+        </DebugPanel>
+      </div>
     );
   }
 }

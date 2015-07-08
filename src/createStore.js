@@ -1,15 +1,13 @@
 import Store from './Store';
 import combineReducers from './utils/combineReducers';
 
-export default function createStore(
-  reducer,
-  initialState
-) {
+export default function createStore(reducer) {
   const finalReducer = typeof reducer === 'function' ?
     reducer :
     combineReducers(reducer);
 
-  const store = new Store(finalReducer, initialState);
+  // TODO: initial state
+  const store = new Store(finalReducer);
 
   return {
     dispatch: ::store.dispatch,
