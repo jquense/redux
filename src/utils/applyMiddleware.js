@@ -14,18 +14,18 @@ export default function applyMiddleware(...middlewares) {
     middlewares :
     [thunk];
 
-  return next => (...args) => {
-    const store = next(...args);
-    const methods = {
-      dispatch: store.dispatch,
-      getState: store.getState
-    };
-    return {
-      ...store,
-      dispatch: compose(
-        composeMiddleware(...finalMiddlewares)(methods),
-        store.dispatch
-      )
-    };
+  return next => (reducer, initialState) => {
+    const store = next(reducer, initialState);
+    const { dispatch, getState } = store;
+
+    const middleware = composeMiddleware(...finalMiddlewares);
+    const dispatchWithMiddleware = compose(
+      middleware({ dispatch, getState }),
+      dispatch
+    );
+
+    return Object.assign(Object.create(store), {
+      dispatch: dispatchWithMiddleware
+    });
   };
 }
