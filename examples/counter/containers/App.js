@@ -1,11 +1,11 @@
 import React from 'react';
 import CounterApp from './CounterApp';
-import { createStore, applyMiddleware, compose, combineReducers } from 'redux';
-import { Provider } from 'redux/react';
+import { createStore, applyMiddleware, compose, combineReducers, bindActionCreators } from 'redux';
+import { Provider, Connector } from 'redux/react';
 import * as reducers from '../reducers';
 
 import DebugPanel from '../redux-devtools/DebugPanel';
-import devtools from '../redux-devtools/devtools';
+import devtools, { ActionCreators } from '../redux-devtools/devtools';
 import ReduxMonitor from '../redux-devtools/ReduxMonitor';
 
 const finalCreateStore = compose(
@@ -27,7 +27,15 @@ export default class App {
 
         <DebugPanel top right bottom>
           <Provider store={devToolsStore}>
-            {() => <ReduxMonitor />}
+            {() =>
+              <Connector>
+                {({ dispatch, ...props }) =>
+                  <ReduxMonitor
+                    {...props}
+                    {...bindActionCreators(ActionCreators, dispatch)} />
+                }
+              </Connector>
+            }
           </Provider>
         </DebugPanel>
       </div>
